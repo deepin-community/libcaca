@@ -6,6 +6,14 @@
 
 set -e
 
+if [ -n "${DEB_HOST_GNU_TYPE:-}" ]; then
+    CROSS_COMPILE="$DEB_HOST_GNU_TYPE-"
+else
+    CROSS_COMPILE=
+fi
+
+export TERM=linux
+
 WORKDIR=$(mktemp -d)
 trap "rm -rf $WORKDIR" 0 INT QUIT ABRT PIPE TERM
 cd $WORKDIR
@@ -28,10 +36,35 @@ int main(void)
 }
 EOF
 
-gcc -o caca_test caca_test.c `pkg-config --cflags --libs caca` -Wall -Werror
+${CROSS_COMPILE}gcc -o caca_test caca_test.c `${CROSS_COMPILE}pkg-config --cflags --libs caca` -Wall
 echo "build: OK"
 [ -x caca_test ]
-export TERM=linux
 ./caca_test
 echo "run: OK"
 
+${CROSS_COMPILE}gcc -o caca_test_legacy caca_test.c `caca-config --cflags --libs` -Wall -Werror
+echo "build (legacy caca-config script): OK"
+[ -x caca_test_legacy ]
+./caca_test_legacy
+echo "run: OK"
+
+cat <<EOF > caca_test.cpp
+#include <caca++.h>
+#include <iostream>
+
+int main(void)
+{
+	std::cout << "Testing libcaca version " << Caca::getVersion() << std::endl;
+
+	Canvas c;
+	c.Clear();
+
+	return 0;
+}
+EOF
+
+${CROSS_COMPILE}g++ -o caca_test_cpp caca_test.cpp `${CROSS_COMPILE}pkg-config --cflags --libs caca++` -Wall
+echo "build C++: OK"
+[ -x caca_test_cpp ]
+./caca_test_cpp
+echo "run C++: OK"

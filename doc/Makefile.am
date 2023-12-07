@@ -1,4 +1,6 @@
 
+include $(top_srcdir)/build/autotools/common.am
+
 EXTRA_DIST = doxygen.cfg.in doxygen.css footer.html header.html \
              $(man_MANS) $(doxygen_DOX)
 CLEANFILES = doxygen.log stamp-latex stamp-doxygen
@@ -27,10 +29,7 @@ endif
 stamp-latex: stamp-doxygen
 if BUILD_DOCUMENTATION
 if USE_LATEX
-	rm -f latex/libcaca.tex latex/libcaca.pdf
-	mv latex/refman.tex latex/libcaca.tex
-	sed 's/setlength{/renewcommand{/' latex/libcaca.tex \
-	  | sed 's/.*usepackage.*times.*//' > latex/refman.tex
+	rm -f latex/libcaca.pdf
 	cd latex && $(MAKE) $(AM_CFLAGS) refman.pdf || (cat refman.log; exit 1)
 	mv latex/refman.pdf latex/libcaca.pdf
 	touch stamp-latex
@@ -57,6 +56,5 @@ endif
 	ln -sf cacafire.1 $(DESTDIR)$(mandir)/man1/cacademo.1
 
 uninstall-local:
-	rm -f $(DESTDIR)$(datadir)/doc/libcucul-dev
 	rmdir $(DESTDIR)$(datadir)/doc 2>/dev/null || true
 

@@ -1,8 +1,8 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2014 Sam Hocevar <sam@hocevar.net>
- *                2006 Jean-Yves Lamoureux <jylam@lnxscene.org>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2021 Sam Hocevar <sam@hocevar.net>
+ *              2006 Jean-Yves Lamoureux <jylam@lnxscene.org>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -46,7 +46,7 @@ ssize_t _import_text(caca_canvas_t *cv, void const *data, size_t size)
     char const *text = (char const *)data;
     unsigned int width = 0, height = 0, x = 0, y = 0, i;
 
-    caca_set_canvas_size(cv, width, height);
+    caca_set_canvas_size(cv, 0, 0);
 
     for(i = 0; i < size; i++)
     {
@@ -70,15 +70,19 @@ ssize_t _import_text(caca_canvas_t *cv, void const *data, size_t size)
             if(y >= height)
                 height = y + 1;
 
-            caca_set_canvas_size(cv, width, height);
+            if (caca_set_canvas_size(cv, width, height) < 0)
+                return -1;
         }
 
         caca_put_char(cv, x, y, ch);
         x++;
     }
 
-    if(y > height)
-        caca_set_canvas_size(cv, width, height = y);
+    if (y > height)
+    {
+        if (caca_set_canvas_size(cv, width, height = y) < 0)
+            return -1;
+    }
 
     return (ssize_t)size;
 }
@@ -302,6 +306,7 @@ ssize_t _import_ansi(caca_canvas_t *cv, void const *data, size_t size, int utf8)
                     caca_put_char(cv, j, y, ' ');
                 caca_set_attr(cv, savedattr);
 #endif
+                break;
             case 'X': /* ECH (0x58) - Erase Character */
                 if(argc && argv[0])
                 {
@@ -310,6 +315,7 @@ ssize_t _import_ansi(caca_canvas_t *cv, void const *data, size_t size, int utf8)
                     caca_draw_line(cv, x, y, x + argv[0] - 1, y, ' ');
                     caca_set_attr(cv, savedattr);
                 }
+                break;
             case 'd': /* VPA (0x64) - Line Position Absolute */
                 y = (argc && argv[0] > 0) ? argv[0] - 1 : 0;
                 break;
@@ -382,7 +388,7 @@ ssize_t _import_ansi(caca_canvas_t *cv, void const *data, size_t size, int utf8)
         }
 
         /* Form feed means a new frame */
-        else if(buffer[i] == '\f' && buffer[i + 1] == '\n')
+        else if (i + 1 < size && buffer[i] == '\f' && buffer[i + 1] == '\n')
         {
             int f = caca_get_frame_count(cv);
             caca_create_frame(cv, f);
@@ -429,7 +435,8 @@ ssize_t _import_ansi(caca_canvas_t *cv, void const *data, size_t size, int utf8)
             {
                 savedattr = caca_get_attr(cv, -1, -1);
                 caca_set_attr(cv, im.clearattr);
-                caca_set_canvas_size(cv, width = x + wch, height);
+                if (caca_set_canvas_size(cv, width = x + wch, height) < 0)
+                    return -1;
                 caca_set_attr(cv, savedattr);
             }
             else
@@ -446,7 +453,8 @@ ssize_t _import_ansi(caca_canvas_t *cv, void const *data, size_t size, int utf8)
             caca_set_attr(cv, im.clearattr);
             if(growy)
             {
-                caca_set_canvas_size(cv, width, height = y + 1);
+                if (caca_set_canvas_size(cv, width, height = y + 1) < 0)
+                    return -1;
             }
             else
             {
@@ -478,7 +486,8 @@ ssize_t _import_ansi(caca_canvas_t *cv, void const *data, size_t size, int utf8)
     {
         savedattr = caca_get_attr(cv, -1, -1);
         caca_set_attr(cv, im.clearattr);
-        caca_set_canvas_size(cv, width, height = y);
+        if (caca_set_canvas_size(cv, width, height = y))
+            return -1;
         caca_set_attr(cv, savedattr);
     }
 

@@ -1,8 +1,8 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2014 Sam Hocevar <sam@hocevar.net>
- *                2007 Ben Wiley Sittler <bsittler@gmail.com>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2016 Sam Hocevar <sam@hocevar.net>
+ *              2007 Ben Wiley Sittler <bsittler@gmail.com>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -106,12 +106,21 @@ static int x11_init_graphics(caca_display_t *dp)
     dp->resize.allow = 0;
 
 #if defined HAVE_LOCALE_H
-    setlocale(LC_ALL, "");
+    /* FIXME: some better code here would be:
+     * locale_t old_locale = uselocale(newlocale(LC_CTYPE_MASK,
+     *                                           "", (locale_t)0);
+     * … but XOpenDisplay only works properly with setlocale(),
+     * not uselocale(). */
+    char const *old_locale = setlocale(LC_CTYPE, "");
 #endif
 
     dp->drv.p->dpy = XOpenDisplay(NULL);
     if(dp->drv.p->dpy == NULL)
         return -1;
+
+#if defined HAVE_LOCALE_H
+    setlocale(LC_CTYPE, old_locale);
+#endif
 
 #if defined HAVE_GETENV
     fonts[0] = getenv("CACA_FONT");
@@ -333,12 +342,23 @@ static int x11_init_graphics(caca_display_t *dp)
 #if defined X_HAVE_UTF8_STRING
     list = XVaCreateNestedList(0, XNFontSet, dp->drv.p->font_set, NULL);
     dp->drv.p->im = XOpenIM(dp->drv.p->dpy, NULL, NULL, NULL);
+
+    if (dp->drv.p->im == NULL) {
+      fprintf(stderr, "x11 driver error: unable to open input method\n");
+      return -1;
+    }
+
     dp->drv.p->ic = XCreateIC(dp->drv.p->im,
                           XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
                           XNClientWindow, dp->drv.p->window,
                           XNPreeditAttributes, list,
                           XNStatusAttributes, list,
                           NULL);
+
+    if (dp->drv.p->ic == NULL) {
+      fprintf(stderr, "x11 driver error: unable to create input context\n");
+      return -1;
+    }
 #endif
 
     return 0;
@@ -626,7 +646,7 @@ static int x11_get_event(caca_display_t *dp, caca_privevent_t *ev)
             return 1;
         }
 
-        keysym = XKeycodeToKeysym(dp->drv.p->dpy, xevent.xkey.keycode, 0);
+        keysym = XLookupKeysym(&xevent.xkey, 0);
         switch(keysym)
         {
             case XK_F1:    ev->data.key.ch = CACA_KEY_F1;    break;

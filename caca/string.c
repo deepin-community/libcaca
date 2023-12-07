@@ -1,7 +1,7 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2018 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -37,9 +37,13 @@
 #include "caca_internals.h"
 
 #if defined _WIN32 && defined __GNUC__ && __GNUC__ >= 3
+#   if !HAVE_VSNPRINTF_S
 int vsnprintf_s(char *s, size_t n, size_t c,
                 const char *fmt, va_list ap) CACA_WEAK;
+#   endif
+#   if !HAVE_VSNPRINTF
 int vsnprintf(char *s, size_t n, const char *fmt, va_list ap) CACA_WEAK;
+#   endif
 #endif
 
 /** \brief Set cursor position.
@@ -611,43 +615,18 @@ int caca_set_canvas_boundaries(caca_canvas_t *cv, int x, int y, int w, int h)
  */
 
 #if defined _WIN32 && defined __GNUC__ && __GNUC__ >= 3
+#   if !HAVE_VSNPRINTF_S
 int vsnprintf_s(char *s, size_t n, size_t c, const char *fmt, va_list ap)
 {
     return vsnprintf(s, n, fmt, ap);
 }
+#   endif
 
+#   if !HAVE_VSNPRINTF
 int vsnprintf(char *s, size_t n, const char *fmt, va_list ap)
 {
     return 0;
 }
+#   endif
 #endif
-
-/*
- * XXX: The following functions are aliases.
- */
-
-int cucul_gotoxy(cucul_canvas_t *, int, int) CACA_ALIAS(caca_gotoxy);
-int cucul_get_cursor_x(cucul_canvas_t const *) CACA_ALIAS(caca_wherex);
-int cucul_get_cursor_y(cucul_canvas_t const *) CACA_ALIAS(caca_wherey);
-int caca_get_cursor_x(caca_canvas_t const *) CACA_ALIAS(caca_wherex);
-int caca_get_cursor_y(caca_canvas_t const *) CACA_ALIAS(caca_wherey);
-int cucul_put_char(cucul_canvas_t *, int, int, uint32_t)
-         CACA_ALIAS(caca_put_char);
-uint32_t cucul_get_char(cucul_canvas_t const *, int, int)
-         CACA_ALIAS(caca_get_char);
-int cucul_put_str(cucul_canvas_t *, int, int, char const *)
-         CACA_ALIAS(caca_put_str);
-int cucul_printf(cucul_canvas_t *, int, int, char const *, ...)
-         CACA_ALIAS(caca_printf);
-int cucul_clear_canvas(cucul_canvas_t *) CACA_ALIAS(caca_clear_canvas);
-int cucul_set_canvas_handle(cucul_canvas_t *, int, int)
-         CACA_ALIAS(caca_set_canvas_handle);
-int cucul_get_canvas_handle_x(cucul_canvas_t const *)
-         CACA_ALIAS(caca_get_canvas_handle_x);
-int cucul_get_canvas_handle_y(cucul_canvas_t const *)
-         CACA_ALIAS(caca_get_canvas_handle_y);
-int cucul_blit(cucul_canvas_t *, int, int, cucul_canvas_t const *,
-                        cucul_canvas_t const *) CACA_ALIAS(caca_blit);
-int cucul_set_canvas_boundaries(cucul_canvas_t *, int, int, int, int)
-         CACA_ALIAS(caca_set_canvas_boundaries);
 

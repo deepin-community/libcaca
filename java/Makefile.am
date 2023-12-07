@@ -1,4 +1,6 @@
 
+include $(top_srcdir)/build/autotools/common.am
+
 jnidir = $(libdir)/jni
 libcaca_javadir = $(datadir)/java
 
@@ -99,7 +101,7 @@ if USE_JAVA
 BUILT_SOURCES = $(java_jni_headers) $(java_jni_classes)
 endif
 
-libcaca_java_la_CPPFLAGS = $(JAVA_CFLAGS)
+libcaca_java_la_CPPFLAGS = $(AM_CPPFLAGS) $(JAVA_CFLAGS)
 libcaca_java_la_SOURCES = \
   caca_java_common.h   \
   caca_java_common.c   \

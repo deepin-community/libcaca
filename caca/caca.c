@@ -1,7 +1,7 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2006-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2006—2021 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -55,6 +55,12 @@ static int caca_plugin_install(caca_display_t *, char const *);
  *  If no caca canvas is provided, a new one is created. Its handle can be
  *  retrieved using caca_get_canvas() and it is automatically destroyed when
  *  caca_free_display() is called.
+ *
+ *  Note that in order to achieve maximum Unicode compatibility, the driver
+ *  initialisation code may temporarily change the program’s global LC_CTYPE
+ *  locale using setlocale(). It is advised not to call LC_CTYPE-dependent
+ *  functions from other threads during the call to caca_create_display().
+ *  The locale settings are restored when the function returns.
  *
  *  See also caca_create_display_with_driver().
  *
@@ -275,6 +281,17 @@ char const * caca_get_version(void)
 }
 
 /*
+ * XXX: The following functions are private.
+ */
+
+extern void *_caca_alloc2d(size_t width, size_t height, size_t elem_size)
+{
+    if (width == 0 || height == 0 || elem_size == 0 || SIZE_MAX / width / height < elem_size)
+        return NULL;
+    return malloc(width * height * elem_size);
+}
+
+/*
  * XXX: The following functions are local.
  */
 
@@ -466,10 +483,4 @@ static int caca_plugin_install(caca_display_t *dp, char const *driver)
     return sym(dp);
 }
 #endif
-
-/*
- * XXX: The following functions are aliases.
- */
-
-char const * cucul_get_version(void) CACA_ALIAS(caca_get_version);
 

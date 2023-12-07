@@ -1,3 +1,96 @@
+libcaca (0.99.beta20-4) unstable; urgency=medium
+
+  * debian/: Do not build PDF documentation (Closes: #1051154)
+  * debian/control:
+    - Bump Standards-Version
+    - Replace pkg-config with pkgconf
+
+ -- Sebastian Ramacher <sramacher@debian.org>  Sun, 03 Sep 2023 22:34:35 +0200
+
+libcaca (0.99.beta20-3) unstable; urgency=medium
+
+  [ Sebastian Ramacher ]
+  * debian/control: Remove obsolete Pre-Depends
+  * debian/: Remove obsolete postinst and prerm scripts
+  * debian/tests: Do not build autopkgtests with -Werror
+
+  [ Simon McVittie ]
+  * Make libcaca-dev multi-arch co-installable (Closes: #1014744)
+  * d/tests/build: Also exercise C++ linking
+  * d/tests/build: Also exercise legacy caca-config script
+
+ -- Sebastian Ramacher <sramacher@debian.org>  Tue, 12 Jul 2022 10:50:07 +0200
+
+libcaca (0.99.beta20-2) unstable; urgency=medium
+
+  * debian/control:
+    - Adopt package (Closes: #924281, #1011570)
+    - Replace libncursesw5-dev with libncurses-dev
+  * debian/: Clean up d/rules
+  * debian/copyright: Remove duplicate entry
+
+ -- Sebastian Ramacher <sramacher@debian.org>  Sun, 12 Jun 2022 15:39:18 +0200
+
+libcaca (0.99.beta20-1) unstable; urgency=medium
+
+  * QA upload.
+  * Update copyright file for new version
+  * New upstream version 0.99.beta20
+  * Drop all patches, now useless or part of upstream codebase
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Tue, 07 Jun 2022 11:09:41 +0200
+
+libcaca (0.99.beta19-6) unstable; urgency=medium
+
+  * QA upload.
+  * Restore shlibdeps to avoid an extra dependency on freeglut3 for a single
+    optional plugin.
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Tue, 07 Jun 2022 10:53:03 +0200
+
+libcaca (0.99.beta19-5) unstable; urgency=medium
+
+  * QA upload.
+  * make autopkgtest cross-testable (from Ubuntu)
+  * Bump std-version to 4.6.1
+  * Add R^3: no
+  * Drop old XS-testsuite flag in control file
+  * Drop duplicated Section field
+  * Update copyright file with listing of missing licenses
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 06 Jun 2022 12:29:29 +0200
+
+libcaca (0.99.beta19-4) unstable; urgency=medium
+
+  * QA upload.
+
+  [ Fabio Fantoni ]
+  * QA upload.
+  * Switch to use dh and bump compat to 13. (Closes: #804330)
+  * d/control:
+    - remove very old conflicts/replaces.
+    - remove autotools-dev build-dep, no longer needed.
+  * d/caca-utils.mime: remove quoted from placeholder in
+    mailcap entries. (Closes: #987422) Thanks to Marriott NZ.
+  * Update d/copyright.
+
+ -- Jelmer Vernooĳ <jelmer@debian.org>  Sun, 05 Jun 2022 11:39:12 +0100
+
+libcaca (0.99.beta19-3) unstable; urgency=medium
+
+  * QA upload.
+  * Change Vcs-* fields for git repo on salsa.
+  * Add upstream metadata
+  * Add debian/watch
+  * Add debian/gbp.conf
+  * Merge from ubuntu:
+    - SECURITY UPDATE: Heap buffer overflow
+    debian/patches/CVE-2021-30498-and-30499.patch: fix buffer overflows
+    in TGA and troff exports in caca/codec/export.c. (Closes: #987278)
+    CVE-2021-30498 CVE-2021-30499
+
+ -- Fabio Fantoni <fantonifabio@tiscali.it>  Sat, 28 May 2022 17:41:16 +0200
+
 libcaca (0.99.beta19-2.2) unstable; urgency=medium
 
   * Non-maintainer upload.
@@ -523,4 +616,3 @@ libcaca (0.1-1) unstable; urgency=low
   * Initial release.
 
  -- Sam Hocevar (Debian packages) <sam+deb@zoy.org>  Sat, 22 Nov 2003 14:00:18 +0100
-

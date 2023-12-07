@@ -1,7 +1,7 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2021 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -45,6 +45,7 @@ static int caca_resize(caca_canvas_t *, int, int);
  *
  *  If an error occurs, NULL is returned and \b errno is set accordingly:
  *  - \c EINVAL Specified width or height is invalid.
+ *  - \c EOVERFLOW Specified width and height overflowed.
  *  - \c ENOMEM Not enough memory for the requested canvas size.
  *
  *  \param width The desired canvas width
@@ -200,6 +201,7 @@ int caca_unmanage_canvas(caca_canvas_t *cv, int (*callback)(void *), void *p)
  *
  *  If an error occurs, -1 is returned and \b errno is set accordingly:
  *  - \c EINVAL Specified width or height is invalid.
+ *  - \c EOVERFLOW Specified width and height overflowed.
  *  - \c EBUSY The canvas is in use by a display driver and cannot be resized.
  *  - \c ENOMEM Not enough memory for the requested canvas size. If this
  *    happens, the canvas handle becomes invalid and should not be used.
@@ -363,7 +365,15 @@ int caca_rand(int min, int max)
 
 int caca_resize(caca_canvas_t *cv, int width, int height)
 {
-    int x, y, f, old_width, old_height, new_size, old_size;
+    int x, y, f, old_width, old_height, old_size;
+
+    /* Check for overflow */
+    int new_size = width * height;
+    if (new_size < 0 || (width > 0 && new_size / width != height))
+    {
+        seterrno(EOVERFLOW);
+        return -1;
+    }
 
     old_width = cv->width;
     old_height = cv->height;
@@ -375,7 +385,6 @@ int caca_resize(caca_canvas_t *cv, int width, int height)
      * dirty rectangle handling */
     cv->width = width;
     cv->height = height;
-    new_size = width * height;
 
     /* If width or height is smaller (or both), we have the opportunity to
      * reduce or even remove dirty rectangles */
@@ -523,26 +532,4 @@ int caca_resize(caca_canvas_t *cv, int width, int height)
 
     return 0;
 }
-
-/*
- * XXX: The following functions are aliases.
- */
-
-cucul_canvas_t * cucul_create_canvas(int, int) CACA_ALIAS(caca_create_canvas);
-int cucul_manage_canvas(cucul_canvas_t *, int (*)(void *), void *)
-    CACA_ALIAS(caca_manage_canvas);
-int cucul_unmanage_canvas(cucul_canvas_t *, int (*)(void *), void *)
-    CACA_ALIAS(caca_unmanage_canvas);
-int cucul_set_canvas_size(cucul_canvas_t *, int, int)
-    CACA_ALIAS(caca_set_canvas_size);
-int cucul_get_canvas_width(cucul_canvas_t const *)
-    CACA_ALIAS(caca_get_canvas_width);
-int cucul_get_canvas_height(cucul_canvas_t const *)
-    CACA_ALIAS(caca_get_canvas_height);
-uint32_t const * cucul_get_canvas_chars(cucul_canvas_t const *)
-    CACA_ALIAS(caca_get_canvas_chars);
-uint32_t const * cucul_get_canvas_attrs(cucul_canvas_t const *)
-    CACA_ALIAS(caca_get_canvas_attrs);
-int cucul_free_canvas(cucul_canvas_t *) CACA_ALIAS(caca_free_canvas);
-int cucul_rand(int, int) CACA_ALIAS(caca_rand);
 

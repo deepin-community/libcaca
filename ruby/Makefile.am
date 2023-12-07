@@ -1,11 +1,15 @@
 
+include $(top_srcdir)/build/autotools/common.am
+
 rubylibdir = $(RUBY_SITEARCHDIR)
 rubysitedir = $(RUBY_SITELIBDIR)
 
 if USE_RUBY
 rubylib_LTLIBRARIES = caca.la
 rubysite_DATA = lib/caca.rb
+if USE_RUBY_MINITEST
 TESTS = test
+endif
 endif
 
 CFLAGS += -Wno-strict-prototypes -Wno-missing-prototypes
@@ -37,6 +41,4 @@ EXTRA_DIST = ruby.dox \
              t/tc_frame.rb \
              README \
              $(NULL)
-
-echo-sources: ; echo $(SOURCES)
 

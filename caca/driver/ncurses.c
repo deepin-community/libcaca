@@ -1,8 +1,8 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2014 Sam Hocevar <sam@hocevar.net>
- *                2007 Ben Wiley Sittler <bsittler@gmail.com>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2021 Sam Hocevar <sam@hocevar.net>
+ *              2007 Ben Wiley Sittler <bsittler@gmail.com>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -188,7 +188,7 @@
  */
 
 #if defined HAVE_SIGNAL
-static RETSIGTYPE sigwinch_handler(int);
+static void sigwinch_handler(int);
 static caca_display_t *sigwinch_d; /* FIXME: we ought to get rid of this */
 #endif
 #if defined HAVE_GETENV && defined HAVE_PUTENV
@@ -228,6 +228,9 @@ static int ncurses_init_graphics(caca_display_t *dp)
         COLOR_WHITE + 8
     };
 
+#if defined HAVE_LOCALE_H
+    char const *old_locale;
+#endif
     mmask_t newmask;
     int fg, bg, max;
 
@@ -242,13 +245,16 @@ static int ncurses_init_graphics(caca_display_t *dp)
     signal(SIGWINCH, sigwinch_handler);
 #endif
 
-#if defined HAVE_LOCALE_H
-    setlocale(LC_ALL, "");
-#endif
-
     _caca_set_term_title("caca for ncurses");
 
+#if defined HAVE_LOCALE_H
+    old_locale = setlocale(LC_CTYPE, "");
+#endif
     initscr();
+#if defined HAVE_LOCALE_H
+    setlocale(LC_CTYPE, old_locale);
+#endif
+
     keypad(stdscr, TRUE);
     nonl();
     raw();
@@ -588,7 +594,7 @@ static void ncurses_set_cursor(caca_display_t *dp, int flags)
  */
 
 #if defined HAVE_SIGNAL
-static RETSIGTYPE sigwinch_handler(int sig)
+static void sigwinch_handler(int sig)
 {
     sigwinch_d->resize.resized = 1;
 
