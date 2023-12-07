@@ -1,6 +1,8 @@
 /*
  *  libcaca Ruby bindings
- *  Copyright (c) 2007-2014 Pascal Terjan <pterjan@linuxfr.org>
+ *  Copyright © 2007—2014 Pascal Terjan <pterjan@linuxfr.org>
+ *              2021 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -583,7 +585,7 @@ static VALUE render_canvas(VALUE self, VALUE font, VALUE width, VALUE height, VA
         rb_raise(rb_eArgError, "First argument is not a Caca::Font");
     }
 
-    buf = malloc(width*height*4);
+    buf = _caca_alloc2d(width, height, 4);
     if(buf == NULL)
     {
         rb_raise(rb_eNoMemError, "Out of memory");

@@ -1,7 +1,7 @@
 /*
- *  makefont      create libcaca font data
- *  Copyright (c) 2006-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  makefont    create libcaca font data
+ *  Copyright © 2006—2021 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This program is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -40,7 +40,8 @@
  * and the UTF-8 glyphs necessary for canvas rotation and mirroring. */
 static unsigned int const blocklist[] =
 {
-    0x0000, 0x0080, /* Basic latin: A, B, C, a, b, c */
+    0x0020, 0x0080, /* Basic latin: A, B, C, a, b, c */
+#if 0
     0x0080, 0x0100, /* Latin-1 Supplement: Ä, Ç, å, ß */
     0x0100, 0x0180, /* Latin Extended-A: Ā č Ō œ */
     0x0180, 0x0250, /* Latin Extended-B: Ǝ Ƹ */
@@ -63,6 +64,7 @@ static unsigned int const blocklist[] =
     0x30a0, 0x3100, /* Katakana: ロ ル */
     0xff00, 0xfff0, /* Halfwidth and Fullwidth Forms: Ａ, Ｂ, Ｃ, ａ, ｂ, ｃ */
     0x10400, 0x10450, /* Deseret: 𐐒 𐐋 */
+#endif
     0, 0
 };
 
@@ -317,8 +319,22 @@ int main(int argc, char *argv[])
             printf_unicode(&gtab[n]);
 
             if(gtab[n].same_as == n)
-                printf_hex(" */ %s\n",
-                           glyph_data + gtab[n].data_offset, gtab[n].data_size);
+            {
+                char const *lut = " .:nmW@";
+                printf("\n");
+                for (int y = 0; y < height; ++y)
+                {
+                    for (int x = 0; x < gtab[n].data_width; ++x)
+                    {
+                        int val = glyph_data[gtab[n].data_offset + y * gtab[n].data_width + x];
+                        char ch = lut[val * val * 7 / 256 / 256];
+                        printf("%c%c", ch, ch);
+                    }
+                    printf("\n");
+                }
+                //printf_hex(" */ %s\n",
+                //           glyph_data + gtab[n].data_offset, gtab[n].data_size);
+            }
             else
             {
                 printf(" is ");

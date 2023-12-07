@@ -1,7 +1,7 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2021 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -269,14 +269,14 @@ int caca_rotate_left(caca_canvas_t *cv)
     w2 = (cv->width + 1) / 2;
     h2 = cv->height;
 
-    newchars = malloc(w2 * h2 * 2 * sizeof(uint32_t));
+    newchars = _caca_alloc2d(w2, h2, 2 * sizeof(uint32_t));
     if(!newchars)
     {
         seterrno(ENOMEM);
         return -1;
     }
 
-    newattrs = malloc(w2 * h2 * 2 * sizeof(uint32_t));
+    newattrs = _caca_alloc2d(w2, h2, 2 * sizeof(uint32_t));
     if(!newattrs)
     {
         free(newchars);
@@ -389,14 +389,14 @@ int caca_rotate_right(caca_canvas_t *cv)
     w2 = (cv->width + 1) / 2;
     h2 = cv->height;
 
-    newchars = malloc(w2 * h2 * 2 * sizeof(uint32_t));
+    newchars = _caca_alloc2d(w2 * 2, h2, sizeof(uint32_t));
     if(!newchars)
     {
         seterrno(ENOMEM);
         return -1;
     }
 
-    newattrs = malloc(w2 * h2 * 2 * sizeof(uint32_t));
+    newattrs = _caca_alloc2d(w2 * 2, h2, sizeof(uint32_t));
     if(!newattrs)
     {
         free(newchars);
@@ -504,14 +504,14 @@ int caca_stretch_left(caca_canvas_t *cv)
     /* Save the current frame shortcuts */
     _caca_save_frame_info(cv);
 
-    newchars = malloc(cv->width * cv->height * sizeof(uint32_t));
+    newchars = _caca_alloc2d(cv->width, cv->height, sizeof(uint32_t));
     if(!newchars)
     {
         seterrno(ENOMEM);
         return -1;
     }
 
-    newattrs = malloc(cv->width * cv->height * sizeof(uint32_t));
+    newattrs = _caca_alloc2d(cv->width, cv->height, sizeof(uint32_t));
     if(!newattrs)
     {
         free(newchars);
@@ -597,14 +597,14 @@ int caca_stretch_right(caca_canvas_t *cv)
     /* Save the current frame shortcuts */
     _caca_save_frame_info(cv);
 
-    newchars = malloc(cv->width * cv->height * sizeof(uint32_t));
+    newchars = _caca_alloc2d(cv->width, cv->height, sizeof(uint32_t));
     if(!newchars)
     {
         seterrno(ENOMEM);
         return -1;
     }
 
-    newattrs = malloc(cv->width * cv->height * sizeof(uint32_t));
+    newattrs = _caca_alloc2d(cv->width, cv->height, sizeof(uint32_t));
     if(!newattrs)
     {
         free(newchars);
@@ -1227,17 +1227,4 @@ static void rightpair(uint32_t pair[2])
             return;
         }
 }
-
-/*
- * XXX: The following functions are aliases.
- */
-
-int cucul_invert(cucul_canvas_t *) CACA_ALIAS(caca_invert);
-int cucul_flip(cucul_canvas_t *) CACA_ALIAS(caca_flip);
-int cucul_flop(cucul_canvas_t *) CACA_ALIAS(caca_flop);
-int cucul_rotate_180(cucul_canvas_t *) CACA_ALIAS(caca_rotate_180);
-int cucul_rotate_left(cucul_canvas_t *) CACA_ALIAS(caca_rotate_left);
-int cucul_rotate_right(cucul_canvas_t *) CACA_ALIAS(caca_rotate_right);
-int cucul_stretch_left(cucul_canvas_t *) CACA_ALIAS(caca_stretch_left);
-int cucul_stretch_right(cucul_canvas_t *) CACA_ALIAS(caca_stretch_right);
 

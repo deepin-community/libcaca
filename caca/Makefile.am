@@ -1,10 +1,14 @@
 
+include $(top_srcdir)/build/autotools/common.am
+
+SUBDIRS = . t
+
 EXTRA_DIST = caca.pc.in \
              mono9.data monobold12.data \
              libcaca.vcxproj libcaca.def
 DISTCLEANFILES = caca.pc
 
-AM_CPPFLAGS = -I$(top_srcdir) -DPLUGINDIR=\"$(plugindir)\"
+AM_CPPFLAGS += -DPLUGINDIR=\"$(plugindir)\"
 
 pkgconfig_DATA = caca.pc
 pkgconfigdir = $(libdir)/pkgconfig
@@ -28,7 +32,6 @@ libcaca_la_SOURCES = \
 	canvas.c \
 	dirty.c \
 	string.c \
-	legacy.c \
 	transform.c \
 	charset.c \
 	attr.c \
@@ -76,14 +79,8 @@ driver_source = \
 
 uninstall-local:
 	. ./libcaca.la || exit 1; \
-	for x in $$library_names; do \
-	  rm -f $(DESTDIR)$(libdir)/$$(echo $$x | sed 's/caca/cucul/g'); \
-	done
-	rm -f $(DESTDIR)$(libdir)/libcucul.la
 	rmdir $(DESTDIR)$(libdir) 2>/dev/null || true
-	rm -f $(DESTDIR)$(pkgconfigdir)/cucul.pc
 	rmdir $(DESTDIR)$(pkgconfigdir) 2>/dev/null || true
-	rm -f $(DESTDIR)$(includedir)/cucul.h
 
 if USE_PLUGINS
 plugin_LTLIBRARIES = libx11_plugin.la libgl_plugin.la
@@ -104,7 +101,7 @@ endif
 
 if USE_COCOA
 driver_source += driver/cocoa.m
+else
+EXTRA_CHECKS = driver/cocoa.m
 endif
-
-echo-sources: ; echo $(SOURCES)
 

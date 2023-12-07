@@ -1,13 +1,13 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2018 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
  *  and/or modify it under the terms of the Do What the Fuck You Want
- *  to Public License, Version 2, as published by Sam Hocevar. See
- *  http://www.wtfpl.net/ for more details.
+ *  to Public License, Version 2, as published by the WTFPL Task Force.
+ *  See http://www.wtfpl.net/ for more details.
  */
 
 /*
@@ -116,7 +116,7 @@ enum color_mode
 struct caca_dither
 {
     int bpp, has_palette, has_alpha;
-    int w, h, pitch;
+    size_t w, h, pitch;
     int rmask, gmask, bmask, amask;
     int rright, gright, bright, aright;
     int rleft, gleft, bleft, aleft;
@@ -991,10 +991,10 @@ int caca_dither_bitmap(caca_canvas_t *cv, int x, int y, int w, int h,
         /* First get RGB */
         if(d->antialias)
         {
-            fromx = (x - x1) * w / deltax;
-            fromy = (y - y1) * h / deltay;
-            tox = (x - x1 + 1) * w / deltax;
-            toy = (y - y1 + 1) * h / deltay;
+            fromx = (uint64_t)(x - x1) * w / deltax;
+            fromy = (uint64_t)(y - y1) * h / deltay;
+            tox = (uint64_t)(x - x1 + 1) * w / deltax;
+            toy = (uint64_t)(y - y1 + 1) * h / deltay;
 
             /* We want at least one pixel */
             if(tox == fromx) tox++;
@@ -1017,10 +1017,10 @@ int caca_dither_bitmap(caca_canvas_t *cv, int x, int y, int w, int h,
         }
         else
         {
-            fromx = (x - x1) * w / deltax;
-            fromy = (y - y1) * h / deltay;
-            tox = (x - x1 + 1) * w / deltax;
-            toy = (y - y1 + 1) * h / deltay;
+            fromx = (uint64_t)(x - x1) * w / deltax;
+            fromy = (uint64_t)(y - y1) * h / deltay;
+            tox = (uint64_t)(x - x1 + 1) * w / deltax;
+            toy = (uint64_t)(y - y1 + 1) * h / deltay;
 
             /* tox and toy can overflow the canvas, but they cannot overflow
              * when averaged with fromx and fromy because these are guaranteed
@@ -1574,55 +1574,4 @@ static int init_lookup(void)
 
     return 0;
 }
-
-/*
- * XXX: The following functions are aliases.
- */
-
-cucul_dither_t *cucul_create_dither(int, int, int, int, uint32_t, uint32_t,
-                                    uint32_t, uint32_t)
-         CACA_ALIAS(caca_create_dither);
-int cucul_set_dither_palette(cucul_dither_t *, uint32_t r[], uint32_t g[],
-                             uint32_t b[], uint32_t a[])
-         CACA_ALIAS(caca_set_dither_palette);
-int cucul_set_dither_brightness(cucul_dither_t *, float)
-         CACA_ALIAS(caca_set_dither_brightness);
-float cucul_get_dither_brightness(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_brightness);
-int cucul_set_dither_gamma(cucul_dither_t *, float)
-         CACA_ALIAS(caca_set_dither_gamma);
-float cucul_get_dither_gamma(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_gamma);
-int cucul_set_dither_contrast(cucul_dither_t *, float)
-         CACA_ALIAS(caca_set_dither_contrast);
-float cucul_get_dither_contrast(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_contrast);
-int cucul_set_dither_antialias(cucul_dither_t *, char const *)
-         CACA_ALIAS(caca_set_dither_antialias);
-char const * const * cucul_get_dither_antialias_list(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_antialias_list);
-char const * cucul_get_dither_antialias(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_antialias);
-int cucul_set_dither_color(cucul_dither_t *, char const *)
-         CACA_ALIAS(caca_set_dither_color);
-char const * const * cucul_get_dither_color_list(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_color_list);
-char const * cucul_get_dither_color(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_color);
-int cucul_set_dither_charset(cucul_dither_t *, char const *)
-         CACA_ALIAS(caca_set_dither_charset);
-char const * const * cucul_get_dither_charset_list(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_charset_list);
-char const * cucul_get_dither_charset(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_charset);
-int cucul_set_dither_algorithm(cucul_dither_t *, char const *)
-         CACA_ALIAS(caca_set_dither_algorithm);
-char const * const * cucul_get_dither_algorithm_list(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_algorithm_list);
-char const * cucul_get_dither_algorithm(cucul_dither_t const *)
-         CACA_ALIAS(caca_get_dither_algorithm);
-int cucul_dither_bitmap(cucul_canvas_t *, int, int, int, int,
-                        cucul_dither_t const *, void *)
-         CACA_ALIAS(caca_dither_bitmap);
-int cucul_free_dither(cucul_dither_t *) CACA_ALIAS(caca_free_dither);
 

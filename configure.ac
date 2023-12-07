@@ -1,19 +1,17 @@
 
-AC_INIT(libcaca, 0.99.beta19)
-AC_PREREQ(2.50)
+AC_INIT([libcaca],[0.99.beta20])
+AC_PREREQ([2.71])
 AC_CONFIG_AUX_DIR(.auto)
-AC_CANONICAL_SYSTEM
-dnl  We cannot use subdir-objects because of a bug that will eg. remove
-dnl  ../src/.deps upon distclean when a file from ../src/ is used.
-AM_INIT_AUTOMAKE([no-define tar-ustar silent-rules subdir-objects])
+AC_CANONICAL_TARGET
+AM_INIT_AUTOMAKE([foreign no-define tar-ustar silent-rules subdir-objects])
 dnl AM_MAINTAINER_MODE
 AM_DEFAULT_VERBOSITY=0
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 LT_MAJOR="0"
 LT_MINOR="99"
-LT_MICRO="19"
+LT_MICRO="20"
 AC_SUBST(LT_MAJOR)
 AC_SUBST(LT_MINOR)
 AC_SUBST(LT_MICRO)
@@ -30,13 +28,11 @@ AC_SUBST(OBJC)
 AC_SUBST(OBJCFLAGS)
 AM_PROG_AS
 
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
-AC_LIBTOOL_CXX
+LT_INIT([win32-dll])
+LT_LANG([C++])
 
 AC_C_CONST
 AC_C_INLINE
-AC_TYPE_SIGNAL
 
 dnl  AC_PROG_EGREP only exists in autoconf 2.54+, so we use AC_EGREP_CPP right
 dnl  now otherwise it might be set in an obscure if statement. Same thing for
@@ -126,6 +122,9 @@ AC_CHECK_HEADERS(stdio.h stdarg.h signal.h sys/ioctl.h sys/time.h endian.h unist
 AC_CHECK_FUNCS(signal ioctl snprintf sprintf_s vsnprintf vsnprintf_s getenv putenv strcasecmp htons)
 AC_CHECK_FUNCS(usleep gettimeofday atexit)
 
+AC_CHECK_HEADERS(_mingw.h,
+ [CPPFLAGS="${CPPFLAGS} -D__USE_MINGW_ANSI_STDIO=0"])
+
 ac_cv_have_getopt_long="no"
 AC_CHECK_FUNCS(getopt_long,
  [ac_cv_have_getopt_long="yes"],
@@ -138,19 +137,28 @@ fi
 AC_SUBST(GETOPT_LIBS)
 
 AC_MSG_CHECKING(for Sleep)
-AC_TRY_COMPILE([#include <windows.h>],[Sleep(42);],
+AC_COMPILE_IFELSE(
+ [AC_LANG_PROGRAM(
+   [[#include <windows.h>]],
+   [[Sleep(42);]])],
  [AC_MSG_RESULT(yes)
   AC_DEFINE(HAVE_SLEEP, 1, [Define to 1 if you have the ‘Sleep’ function.])],
  [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for fsin/fcos)
-AC_TRY_COMPILE([],[double x; asm volatile("fsin; fcos":"=t"(x):);],
+AC_COMPILE_IFELSE(
+ [AC_LANG_PROGRAM(
+   [[]],
+   [[double x; asm volatile("fsin; fcos":"=t"(x):);]])],
  [AC_MSG_RESULT(yes)
   AC_DEFINE(HAVE_FSIN_FCOS, 1, [Define to 1 if you have the ‘fsin’ and ‘fcos’ instructions.])],
  [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for fldln2/fxch/fyl2x)
-AC_TRY_COMPILE([],[double x; asm volatile("fldln2; fldln2; fxch; fyl2x":"=t"(x):);],
+AC_COMPILE_IFELSE(
+ [AC_LANG_PROGRAM(
+   [[]],
+   [[double x; asm volatile("fldln2; fldln2; fxch; fyl2x":"=t"(x):);]])],
  [AC_MSG_RESULT(yes)
   AC_DEFINE(HAVE_FLDLN2, 1, [Define to 1 if you have the ‘fldln2’ and other floating point instructions.])],
  [AC_MSG_RESULT(no)])
@@ -255,9 +263,13 @@ AM_CONDITIONAL(USE_FTGL, test "${FTGL}" = "yes")
 
 if test "${enable_cocoa}" != "no"; then
   ac_cv_my_have_cocoa="no"
+  save_CFLAGS="$CFLAGS"
+  CFLAGS="$CFLAGS -ObjC++"
   AC_CHECK_HEADERS(Cocoa/Cocoa.h,
    [ac_cv_my_have_cocoa="yes"])
+  CFLAGS="$save_CFLAGS"
   if test "${ac_cv_my_have_cocoa}" = "yes"; then
+    [[[ "$target_os" =~ [0-9]+ ]]] && darwin_ver="${BASH_REMATCH[[0]]}"
     case x${target} in
     xpowerpc*darwin*)
       # 10.3 needed to link with X11
@@ -285,15 +297,19 @@ if test "${enable_cocoa}" != "no"; then
     esac
     CC="${CC:-gcc-${GCC_VERSION}}"
     CXX="${CXX:-g++-${GCC_VERSION}}"
-    MACOSX_SDK_FRAMEWORKS="${MACOSX_SDK_FRAMEWORKS:--F${MACOSX_SDK}/System/Library/Frameworks}"
-    CPPFLAGS="${CPPFLAGS} ${ARCH} ${MACOSX_SDK_FRAMEWORKS}"
-    CFLAGS="${CFLAGS} ${MACOSX_SDK_CFLAGS} -mmacosx-version-min=10.5"
-    CXXFLAGS="${CXXFLAGS} ${MACOSX_SDK_CXXFLAGS} -mmacosx-version-min=10.5"
-    OBJCFLAGS="${OBJCFLAGS} ${MACOSX_SDK_CFLAGS} -mmacosx-version-min=10.5"
-    LDFLAGS="${ARCH} ${MACOSX_SDK_LDFLAGS} ${LDFLAGS}"
-    AC_DEFINE(USE_COCOA, 1, Define to 1 to activate the Cocoa backend driver)
-    CACA_LIBS="${CACA_LIBS} -Wl,-syslibroot,${MACOSX_SDK},-framework,Cocoa"
+    if [[ "$darwin_ver" -lt "13" ]]; then
+      MACOSX_SDK_FRAMEWORKS="${MACOSX_SDK_FRAMEWORKS:--F${MACOSX_SDK}/System/Library/Frameworks}"
+      CPPFLAGS="${CPPFLAGS} ${ARCH} ${MACOSX_SDK_FRAMEWORKS}"
+      CFLAGS="${CFLAGS} ${MACOSX_SDK_CFLAGS} -mmacosx-version-min=10.5"
+      CXXFLAGS="${CXXFLAGS} ${MACOSX_SDK_CXXFLAGS} -mmacosx-version-min=10.5"
+      OBJCFLAGS="${OBJCFLAGS} ${MACOSX_SDK_CFLAGS} -mmacosx-version-min=10.5"
+      LDFLAGS="${ARCH} ${MACOSX_SDK_LDFLAGS} ${LDFLAGS}"
+      CACA_LIBS="${CACA_LIBS} -Wl,-syslibroot,${MACOSX_SDK},-framework,Cocoa"
+    else
+      CACA_LIBS="${CACA_LIBS} -Wl,-framework,Cocoa"
+    fi
     CACA_DRIVERS="${CACA_DRIVERS} cocoa"
+    AC_DEFINE(USE_COCOA, 1, Define to 1 to activate the Cocoa backend driver)
   elif test "${enable_cocoa}" = "yes"; then
     AC_MSG_ERROR([cannot find Cocoa development files])
   fi
@@ -378,6 +394,16 @@ CFLAGS="${CFLAGS} -g -O2 -fno-strength-reduce -fomit-frame-pointer"
 CFLAGS="${CFLAGS} -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Wstrict-prototypes -Wshadow -Waggregate-return -Wmissing-prototypes -Wnested-externs -Wsign-compare"
 CXXFLAGS="${CXXFLAGS} -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
 
+dnl Visibility annotations...
+saved_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS -fvisibility=hidden -Wall -Werror"
+AC_MSG_CHECKING(whether compiler supports visibility annotations)
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[void __attribute__((visibility("default"))) foo(void); void foo(void) {}]])],
+                  [CFLAGS="$saved_CFLAGS -fvisibility=hidden -DCACA_ENABLE_VISIBILITY";
+                   AC_MSG_RESULT(yes)],
+                  [CFLAGS="$saved_CFLAGS"
+                   AC_MSG_RESULT(no)])
+
 CACA_BINDINGS=""
 
 # Build the C++ bindings?
@@ -385,11 +411,8 @@ ac_cv_my_have_cxx="no"
 if test "${enable_cxx}" != "no"; then
   AC_MSG_CHECKING([working <iostream>])
   AC_LANG_PUSH(C++)
-  AC_TRY_COMPILE(
-   [#include <iostream>],
-   [],
-   [ac_cv_my_have_cxx="yes"
-    CACA_BINDINGS="${CACA_BINDINGS} C++"])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <iostream>]], [[]])],[ac_cv_my_have_cxx="yes"
+    CACA_BINDINGS="${CACA_BINDINGS} C++"],[])
   AC_LANG_POP(C++)
   AC_MSG_RESULT([$ac_cv_my_have_cxx])
 fi
@@ -462,13 +485,14 @@ AM_CONDITIONAL(USE_PYTHON, test "${ac_cv_my_have_python}" = "yes")
 
 # Build the Ruby bindings?
 ac_cv_my_have_ruby="no"
+ac_cv_my_have_ruby_minitest="no"
 if test "${enable_ruby}" != "no"; then
   AC_PATH_PROG(RUBY, ruby, no)
   if test "${RUBY}" != "no"; then
-    RUBY_CFLAGS="$(ruby -r mkmf -e 'conf = RbConfig::CONFIG.merge("hdrdir" => $hdrdir, "arch_hdrdir" => $arch_hdrdir); print RbConfig::expand("#$INCFLAGS", conf)')"
-    RUBY_LIBS="-L$(ruby -r rbconfig -e 'print RbConfig::CONFIG@<:@"libdir"@:>@') -l$(ruby -r rbconfig -e 'print RbConfig::CONFIG@<:@"RUBY_SO_NAME"@:>@')"
-    RUBY_SITEARCHDIR=`ruby -r rbconfig -e 'print RbConfig::CONFIG@<:@"sitearchdir"@:>@'`
-    RUBY_SITELIBDIR=`ruby -r rbconfig -e 'print RbConfig::CONFIG@<:@"sitelibdir"@:>@'`
+    RUBY_CFLAGS="$("${RUBY}" -r mkmf -e 'conf = RbConfig::CONFIG.merge("hdrdir" => $hdrdir, "arch_hdrdir" => $arch_hdrdir); print RbConfig::expand("#$INCFLAGS", conf)')"
+    RUBY_LIBS="-L$("${RUBY}" -r rbconfig -e 'print RbConfig::CONFIG@<:@"libdir"@:>@') -l$("${RUBY}" -r rbconfig -e 'print RbConfig::CONFIG@<:@"RUBY_SO_NAME"@:>@')"
+    RUBY_SITEARCHDIR=`"${RUBY}" -r rbconfig -e 'print RbConfig::CONFIG@<:@"sitearchdir"@:>@'`
+    RUBY_SITELIBDIR=`"${RUBY}" -r rbconfig -e 'print RbConfig::CONFIG@<:@"sitelibdir"@:>@'`
     AC_SUBST(RUBY_CFLAGS)
     AC_SUBST(RUBY_LIBS)
     AC_SUBST(RUBY_SITEARCHDIR)
@@ -477,9 +501,16 @@ if test "${enable_ruby}" != "no"; then
     AC_CHECK_HEADERS([ruby.h],
      [ac_cv_my_have_ruby="yes"
       CACA_BINDINGS="${CACA_BINDINGS} Ruby"])
+    # For unit tests
+    AC_MSG_CHECKING(for ruby-minitest)
+    if "${RUBY}" -e "require 'minitest'" 2>/dev/null; then
+      ac_cv_my_have_ruby_minitest="yes"
+    fi
+    AC_MSG_RESULT(${ac_cv_my_have_ruby_minitest})
   fi
 fi
 AM_CONDITIONAL(USE_RUBY, test "${ac_cv_my_have_ruby}" = "yes")
+AM_CONDITIONAL(USE_RUBY_MINITEST, test "${ac_cv_my_have_ruby_minitest}" = "yes")
 
 AC_MSG_CHECKING(available language bindings)
 if test -z "${CACA_BINDINGS}"; then
@@ -540,8 +571,10 @@ AM_CONDITIONAL(BUILD_DOCUMENTATION, test "${DOXYGEN}" != "no")
 AM_CONDITIONAL(USE_LATEX, test "${LATEX}" != "no")
 
 # Use cppunit for unit tests?
-PKG_CHECK_MODULES(CPPUNIT, cppunit, [CPPUNIT="yes"], [CPPUNIT="no"])
-AM_CONDITIONAL(USE_CPPUNIT, test "$CPPUNIT" = "yes")
+AS_IF([test "x$enable_cppunit" = "xyes"], [
+  PKG_CHECK_MODULES([CPPUNIT], [cppunit])
+])
+AM_CONDITIONAL([USE_CPPUNIT], [test "x$enable_cppunit" = "xyes"])
 
 # Use zzuf for fuzzing tests?
 ZZUF="no"
@@ -554,9 +587,9 @@ AC_CONFIG_FILES(
  [Makefile
   kernel/Makefile
   caca/Makefile
+  caca/t/Makefile
   src/Makefile
   examples/Makefile
-  test/Makefile
   tools/Makefile
   java/Makefile
   caca-sharp/Makefile
@@ -564,7 +597,7 @@ AC_CONFIG_FILES(
   python/Makefile
   ruby/Makefile
   doc/Makefile
-  win32/Makefile
+  build/Makefile
 ])
 AC_CONFIG_FILES(
  [caca/caca.pc

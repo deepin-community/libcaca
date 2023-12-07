@@ -1,8 +1,8 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2012 Sam Hocevar <sam@hocevar.net>
- *                2007 Ben Wiley Sittler <bsittler@gmail.com>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2018 Sam Hocevar <sam@hocevar.net>
+ *              2007 Ben Wiley Sittler <bsittler@gmail.com>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -417,16 +417,4 @@ int caca_utf32_is_fullwidth(uint32_t ch)
         return 1;
     return 0;
 }
-
-/*
- * XXX: The following functions are aliases.
- */
-
-uint32_t cucul_utf8_to_utf32(char const *, size_t *)
-         CACA_ALIAS(caca_utf8_to_utf32);
-size_t cucul_utf32_to_utf8(char *, uint32_t) CACA_ALIAS(caca_utf32_to_utf8);
-uint8_t cucul_utf32_to_cp437(uint32_t) CACA_ALIAS(caca_utf32_to_cp437);
-uint32_t cucul_cp437_to_utf32(uint8_t) CACA_ALIAS(caca_cp437_to_utf32);
-char cucul_utf32_to_ascii(uint32_t) CACA_ALIAS(caca_utf32_to_ascii);
-int cucul_utf32_is_fullwidth(uint32_t) CACA_ALIAS(caca_utf32_is_fullwidth);
 

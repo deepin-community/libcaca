@@ -1,7 +1,7 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2018 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -362,7 +362,6 @@ int caca_fill_triangle_textured(caca_canvas_t * cv,
                                 int coords[6],
                                 caca_canvas_t * tex, float uv[6])
 {
-
     return caca_fill_triangle_textured_l(cv,
                                          coords[0], coords[1],
                                          coords[2], coords[3],
@@ -372,16 +371,3 @@ int caca_fill_triangle_textured(caca_canvas_t * cv,
                                          uv[2], uv[3], uv[4], uv[5]);
 }
 
-
-
-/*
- * XXX: The following functions are aliases.
- */
-
-int cucul_draw_triangle(cucul_canvas_t *, int, int, int, int, int,
-                        int, uint32_t) CACA_ALIAS(caca_draw_triangle);
-     int cucul_draw_thin_triangle(cucul_canvas_t *, int, int, int, int,
-                                  int,
-                                  int) CACA_ALIAS(caca_draw_thin_triangle);
-     int cucul_fill_triangle(cucul_canvas_t *, int, int, int, int, int, int,
-                             uint32_t) CACA_ALIAS(caca_fill_triangle);

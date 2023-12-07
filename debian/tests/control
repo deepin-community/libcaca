@@ -1,2 +1,5 @@
 Tests: build
-Depends: libcaca-dev, build-essential, pkg-config
+Depends:
+ build-essential,
+ libcaca-dev,
+ pkg-config

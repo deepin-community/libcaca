@@ -1,8 +1,8 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2012 Sam Hocevar <sam@hocevar.net>
- *                2012 Bastian Märkisch <bmaerkisch@web.de>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2021 Sam Hocevar <sam@hocevar.net>
+ *              2012 Bastian Märkisch <bmaerkisch@web.de>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -166,8 +166,7 @@ static int win32_init_graphics(caca_display_t *dp)
 
     SetConsoleActiveScreenBuffer(dp->drv.p->screen);
 
-    dp->drv.p->buffer = malloc(width * height
-                               * sizeof(CHAR_INFO));
+    dp->drv.p->buffer = _caca_alloc2d(width, height, sizeof(CHAR_INFO));
     if(dp->drv.p->buffer == NULL)
         return -1;
 

@@ -1,7 +1,7 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2014 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2021 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -61,6 +61,7 @@ static ssize_t import_caca(caca_canvas_t *, void const *, size_t);
  *
  *  If an error occurs, -1 is returned and \b errno is set accordingly:
  *  - \c ENOMEM Not enough memory to allocate canvas.
+ *  - \c EOVERFLOW Importing data caused a value overflow.
  *  - \c EINVAL Invalid format requested.
  *
  *  \param cv A libcaca canvas in which to import the file.
@@ -419,6 +420,9 @@ ssize_t _import_bin(caca_canvas_t *cv, void const *data, size_t len)
     caca_set_canvas_size(cv, 0, 0);
     caca_set_canvas_size(cv, 160, len / 160);
 
+    /* Only read an even number of bytes */
+    len &= ~(size_t)1;
+
     for (i = 0; i < len; i += 2)
     {
         caca_set_color_ansi(cv, buf[i + 1] & 0xf, buf[i + 1] >> 4);
@@ -432,21 +436,6 @@ ssize_t _import_bin(caca_canvas_t *cv, void const *data, size_t len)
         }
     }
 
-    return len & ~(size_t)1;
+    return len;
 }
-
-/*
- * XXX: The following functions are aliases.
- */
-
-ssize_t cucul_import_memory(cucul_canvas_t *, void const *, size_t,
-                     char const *) CACA_ALIAS(caca_import_canvas_from_memory);
-ssize_t cucul_import_file(cucul_canvas_t *, char const *,
-                     char const *) CACA_ALIAS(caca_import_canvas_from_file);
-ssize_t caca_import_memory(caca_canvas_t *, void const *, size_t, char const *)
-                                  CACA_ALIAS(caca_import_canvas_from_memory);
-ssize_t caca_import_file(caca_canvas_t *, char const *, char const *)
-                                  CACA_ALIAS(caca_import_canvas_from_file);
-char const * const * cucul_get_import_list(void)
-         CACA_ALIAS(caca_get_import_list);
 

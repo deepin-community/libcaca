@@ -1,8 +1,8 @@
 /*
- *  img2txt       image to text converter
- *  Copyright (c) 2006-2012 Sam Hocevar <sam@hocevar.net>
- *                2007 Jean-Yves Lamoureux <jylam@lnxscene.org>
- *                All Rights Reserved
+ *  img2txt     image to text converter
+ *  Copyright © 2006—2018 Sam Hocevar <sam@hocevar.net>
+ *              2007 Jean-Yves Lamoureux <jylam@lnxscene.org>
+ *              All Rights Reserved
  *
  *  This program is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -31,7 +31,7 @@ static void usage(int argc, char **argv)
 
     fprintf(stderr, "Usage: %s [OPTIONS]... <IMAGE>\n", argv[0]);
     fprintf(stderr, "Convert IMAGE to any text based available format.\n");
-    fprintf(stderr, "Example : %s -w 80 -f ansi ./caca.png\n\n", argv[0]);
+    fprintf(stderr, "Example : %s -W 80 -f ansi ./caca.png\n\n", argv[0]);
     fprintf(stderr, "Options:\n");
     fprintf(stderr, "  -h, --help\t\t\tThis help\n");
     fprintf(stderr, "  -v, --version\t\t\tVersion of the program\n");

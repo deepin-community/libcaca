@@ -1,7 +1,7 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2018 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -213,17 +213,4 @@ static int draw_box(caca_canvas_t *cv, int x, int y, int w, int h,
 
     return 0;
 }
-
-/*
- * XXX: The following functions are aliases.
- */
-
-int cucul_draw_box(cucul_canvas_t *, int, int, int, int, uint32_t)
-         CACA_ALIAS(caca_draw_box);
-int cucul_draw_thin_box(cucul_canvas_t *, int, int, int, int)
-         CACA_ALIAS(caca_draw_thin_box);
-int cucul_draw_cp437_box(cucul_canvas_t *, int, int, int, int)
-         CACA_ALIAS(caca_draw_cp437_box);
-int cucul_fill_box(cucul_canvas_t *, int, int, int, int, uint32_t)
-         CACA_ALIAS(caca_fill_box);
 

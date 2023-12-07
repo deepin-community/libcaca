@@ -1,7 +1,7 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2002-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2002—2021 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -102,7 +102,7 @@ static void slang_init_palette(void);
 static void slang_write_utf32(uint32_t);
 
 #if defined(HAVE_SIGNAL)
-static RETSIGTYPE sigwinch_handler(int);
+static void sigwinch_handler(int);
 static caca_display_t *sigwinch_d; /* FIXME: we ought to get rid of this */
 #endif
 #if defined(HAVE_GETENV) && defined(HAVE_PUTENV)
@@ -178,6 +178,7 @@ static int slang_init_graphics(caca_display_t *dp)
 #endif
 
 #ifdef HAVE_SLSMG_UTF8_ENABLE
+    SLutf8_enable(-1);    /* execute utf8 autodetection */
     SLsmg_utf8_enable(1); /* 1 == force, 0 == disable, -1 == autodetect */
     SLtt_utf8_enable(-1);
 #endif
@@ -535,7 +536,7 @@ static void slang_write_utf32(uint32_t ch)
 }
 
 #if defined(HAVE_SIGNAL)
-static RETSIGTYPE sigwinch_handler(int sig)
+static void sigwinch_handler(int sig)
 {
     sigwinch_d->resize.resized = 1;
 

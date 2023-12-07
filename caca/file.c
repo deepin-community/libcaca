@@ -1,7 +1,7 @@
 /*
- *  libcaca       Colour ASCII-Art library
- *  Copyright (c) 2006-2012 Sam Hocevar <sam@hocevar.net>
- *                All Rights Reserved
+ *  libcaca     Colour ASCII-Art library
+ *  Copyright © 2006—2018 Sam Hocevar <sam@hocevar.net>
+ *              All Rights Reserved
  *
  *  This library is free software. It comes without any warranty, to
  *  the extent permitted by applicable law. You can redistribute it
@@ -353,20 +353,4 @@ static int zipread(caca_file_t *fp, void *buf, unsigned int len)
     return total_read;
 }
 #endif
-
-/*
- * XXX: The following functions are aliases.
- */
-
-cucul_file_t *cucul_file_open(char const *, const char *)
-         CACA_ALIAS(caca_file_open);
-int cucul_file_close(cucul_file_t *) CACA_ALIAS(caca_file_close);
-uint64_t cucul_file_tell(cucul_file_t *) CACA_ALIAS(caca_file_tell);
-size_t cucul_file_read(cucul_file_t *, void *, size_t)
-         CACA_ALIAS(caca_file_read);
-size_t cucul_file_write(cucul_file_t *, const void *, size_t)
-         CACA_ALIAS(caca_file_write);
-char * cucul_file_gets(cucul_file_t *, char *, int)
-         CACA_ALIAS(caca_file_gets);
-int cucul_file_eof(cucul_file_t *) CACA_ALIAS(caca_file_eof);
 
