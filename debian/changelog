@@ -1,3 +1,9 @@
+libcaca (0.99.beta20-4deepin0) unstable; urgency=medium
+
+  * No source change upload against GCC 12.
+
+ -- Tianyu Chen <sweetyfish@deepin.org>  Thu, 19 Sep 2024 22:53:02 +0800
+
 libcaca (0.99.beta20-4) unstable; urgency=medium
 
   * debian/: Do not build PDF documentation (Closes: #1051154)
