@@ -1,6 +1,5 @@
 Source: libcaca
 Section: libs
-Priority: optional
 Maintainer: Debian Multimedia Maintainers <debian-multimedia@lists.debian.org>
 Uploaders: Sebastian Ramacher <sramacher@debian.org>
 Build-Depends:
@@ -9,11 +8,9 @@ Build-Depends:
  freeglut3-dev,
  libimlib2-dev,
  libncurses-dev,
- libslang2-dev,
  libx11-dev,
  pkgconf
-Rules-Requires-Root: no
-Standards-Version: 4.6.2
+Standards-Version: 4.7.4
 Vcs-Browser: https://salsa.debian.org/multimedia-team/libcaca
 Vcs-Git: https://salsa.debian.org/multimedia-team/libcaca.git
 Homepage: http://caca.zoy.org/wiki/libcaca
@@ -39,6 +36,8 @@ Architecture: any
 Depends:
  ${misc:Depends},
  ${shlibs:Depends}
+Recommends:
+ ${shlibs:Recommends}
 Multi-Arch: same
 Description: colour ASCII art library
  libcaca is the Colour AsCii Art library. It provides high level functions

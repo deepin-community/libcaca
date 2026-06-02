@@ -1,8 +1,33 @@
-libcaca (0.99.beta20-4deepin0) unstable; urgency=medium
+libcaca (0.99.beta20-7) unstable; urgency=medium
 
-  * No source change upload against GCC 12.
+  [ Salvatore Bonaccorso ]
+  * Prevent undefined behaviour in overflow check (CVE-2026-42046)
+    (Closes: #1136952)
 
- -- Tianyu Chen <sweetyfish@deepin.org>  Thu, 19 Sep 2024 22:53:02 +0800
+  [ Sebastian Ramacher ]
+  * debian/control:
+    - Drop RRR: no
+    - Bump Standards-Version
+    - Drop Priority: optional
+
+ -- Sebastian Ramacher <sramacher@debian.org>  Sat, 30 May 2026 13:00:01 +0200
+
+libcaca (0.99.beta20-6) unstable; urgency=medium
+
+  * debian/control: Bump Standards-Version
+  * debian/:
+    - Disable slang backend due to libslang2 being GPL-licensed (Closes: #754546)
+    - Generate Recommends for dependencies of plugins (Closes: #1085181)
+  * debian/patches: Fix FTCBFS (Closes: #1017948)
+    Thanks to Helmut Grohne
+
+ -- Sebastian Ramacher <sramacher@debian.org>  Fri, 26 Sep 2025 11:39:56 +0200
+
+libcaca (0.99.beta20-5) unstable; urgency=medium
+
+  * debian/patches: Disable doxygen timestamps (Closes: #1071672)
+
+ -- Sebastian Ramacher <sramacher@debian.org>  Sun, 11 Aug 2024 22:08:05 +0200
 
 libcaca (0.99.beta20-4) unstable; urgency=medium
 

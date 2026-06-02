@@ -1,0 +1,27 @@
+From: Sebastian Ramacher <sramacher@debian.org>
+Date: Sun, 11 Aug 2024 22:04:32 +0200
+Subject: Disable doxygen timestamps
+
+---
+ doc/doxygen.cfg.in | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/doc/doxygen.cfg.in b/doc/doxygen.cfg.in
+index 4c39bf9..2a3a1c6 100644
+--- a/doc/doxygen.cfg.in
++++ b/doc/doxygen.cfg.in
+@@ -1290,7 +1290,7 @@ HTML_COLORSTYLE_GAMMA  = 80
+ # The default value is: NO.
+ # This tag requires that the tag GENERATE_HTML is set to YES.
+ 
+-HTML_TIMESTAMP         = YES
++HTML_TIMESTAMP         = NO
+ 
+ # If the HTML_DYNAMIC_MENUS tag is set to YES then the generated HTML
+ # documentation will contain a main index with vertical navigation menus that
+@@ -2616,3 +2616,5 @@ GENERATE_LEGEND        = YES
+ # The default value is: YES.
+ 
+ DOT_CLEANUP            = YES
++
++TIMESTAMP              = NO

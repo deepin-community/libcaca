@@ -1,0 +1,22 @@
+From: Helmut Grohne <helmut@subdivi.de>
+Date: Fri, 26 Sep 2025 11:38:15 +0200
+Subject: Do not export PKG_CONFIG_LIBDIR
+
+---
+ configure.ac | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index dfc9d8a..6e7ee89 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -40,9 +40,6 @@ dnl  PKG_PROG_PKG_CONFIG which needs to be called first.
+ AC_EGREP_CPP(yes, foo)
+ PKG_PROG_PKG_CONFIG()
+ m4_pattern_allow([^PKG_CONFIG_LIBDIR$])
+-if test "${build}" != "${host}" -a "${PKG_CONFIG_LIBDIR}" = ""; then
+-  export PKG_CONFIG_LIBDIR=/dev/null
+-fi
+ 
+ AC_MSG_CHECKING(for suffix of libraries)
+ case "$shrext_cmds" in

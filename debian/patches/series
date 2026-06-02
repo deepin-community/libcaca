@@ -1,2 +1,5 @@
-caca-config.in-Avoid-mentioning-libdir.patch
+0001-caca-config.in-Avoid-mentioning-libdir.patch
 0002-Don-t-generate-PDF-with-latex.patch
+0003-Disable-doxygen-timestamps.patch
+0004-Do-not-export-PKG_CONFIG_LIBDIR.patch
+0005-Prevent-undefined-behaviour-in-overflow-check.patch
