@@ -1,3 +1,9 @@
+libcaca (0.99.beta20-7deepin1) unstable; urgency=medium
+
+  * fix(cve): CVE-2022-0856
+
+ -- deepin-ci-robot <packages@deepin.org>  Thu, 16 Jul 2026 22:26:20 +0800
+
 libcaca (0.99.beta20-7) unstable; urgency=medium
 
   [ Salvatore Bonaccorso ]
